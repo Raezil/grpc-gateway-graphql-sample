@@ -6,23 +6,23 @@ import (
 	"log"
 	"net"
 
-	"greeter"
+	"backend"
 
 	"google.golang.org/grpc"
 )
 
 type Server struct {
-	greeter.UnimplementedGreeterServer
+	backend.UnimplementedGreeterServer
 }
 
-func (s *Server) SayHello(ctx context.Context, req *greeter.HelloRequest) (*greeter.HelloReply, error) {
-	return &greeter.HelloReply{
+func (s *Server) SayHello(ctx context.Context, req *backend.HelloRequest) (*backend.HelloReply, error) {
+	return &backend.HelloReply{
 		Message: fmt.Sprintf("Hello, %s!", req.GetName()),
 	}, nil
 }
 
-func (s *Server) SayGoodbye(ctx context.Context, req *greeter.GoodbyeRequest) (*greeter.GoodbyeReply, error) {
-	return &greeter.GoodbyeReply{
+func (s *Server) SayGoodbye(ctx context.Context, req *backend.GoodbyeRequest) (*backend.GoodbyeReply, error) {
+	return &backend.GoodbyeReply{
 		Message: fmt.Sprintf("Good-bye, %s!", req.GetName()),
 	}, nil
 }
@@ -35,6 +35,6 @@ func main() {
 	defer conn.Close()
 
 	server := grpc.NewServer()
-	greeter.RegisterGreeterServer(server, &Server{})
+	backend.RegisterGreeterServer(server, &Server{})
 	server.Serve(conn)
 }
