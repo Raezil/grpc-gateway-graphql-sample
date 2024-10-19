@@ -41,7 +41,7 @@ func AuthUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.Unary
 	}
 
 	claims, err := VerifyJWT(token[0])
-	ctx = metadata.AppendToOutgoingContext(ctx, "current_user", claims.Email)
+	ctx = metadata.AppendToOutgoingContext(ctx, "current_user", claims.Username)
 	if err != nil {
 		return nil, fmt.Errorf("unauthorized: %v", err)
 	}

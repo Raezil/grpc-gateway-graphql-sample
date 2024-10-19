@@ -12,14 +12,14 @@ import (
 var jwtSecret = []byte("your-256-bit-secret")
 
 type Claims struct {
-	Email string `json:"email"`
+	Username string `json:"username"`
 	jwt.RegisteredClaims
 }
 
-func NewClaims(email string) *Claims {
+func NewClaims(username string) *Claims {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	return &Claims{
-		Email: email,
+		Username: username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
