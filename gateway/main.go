@@ -5,7 +5,7 @@ import (
 
 	"net/http"
 
-	"greeter"
+	"backend"
 
 	"github.com/ysugimoto/grpc-graphql-gateway/runtime"
 )
@@ -13,7 +13,7 @@ import (
 func main() {
 	mux := runtime.NewServeMux()
 
-	if err := greeter.RegisterGreeterGraphql(mux); err != nil {
+	if err := backend.RegisterGreeterGraphql(mux); err != nil {
 		log.Fatalln(err)
 	}
 	http.Handle("/graphql", mux)

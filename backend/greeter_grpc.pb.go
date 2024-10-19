@@ -6,7 +6,7 @@
 // - protoc             v3.21.12
 // source: greeter.proto
 
-package greeter
+package backend
 
 import (
 	context "context"
