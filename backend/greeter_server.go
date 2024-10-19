@@ -48,7 +48,7 @@ func AuthUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.Unary
 	return handler(ctx, req)
 }
 func (s *Server) Login(ctx context.Context, in *LoginRequest) (*LoginReply, error) {
-	log.Println("Login attempt for email:", in.Username)
+	log.Println("Login attempt for username:", in.Username)
 
 	user, err := s.PrismaClient.User.FindUnique(
 		db.User.Username.Equals(in.Username),
@@ -74,7 +74,7 @@ func (s *Server) Login(ctx context.Context, in *LoginRequest) (*LoginReply, erro
 
 	return &LoginReply{
 		Token:   token,
-		Message: "User was signed up!",
+		Message: "User was logged in!",
 	}, nil
 }
 
