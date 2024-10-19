@@ -3,6 +3,7 @@ module backend
 go 1.22.2
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/graphql-go/graphql v0.8.1
 	github.com/pkg/errors v0.9.1
 	github.com/ysugimoto/grpc-graphql-gateway v0.23.0
