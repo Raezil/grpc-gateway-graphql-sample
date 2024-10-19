@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"db"
 	"fmt"
 	"log"
 	"net"
@@ -14,6 +15,7 @@ import (
 
 type Server struct {
 	backend.UnimplementedGreeterServer
+	PrismaClient *db.PrismaClient
 }
 
 func (s *Server) SayHello(ctx context.Context, req *backend.HelloRequest) (*backend.HelloReply, error) {
@@ -47,6 +49,53 @@ func authUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.Unary
 		return nil, fmt.Errorf("unauthorized: %v", err)
 	}
 	return handler(ctx, req)
+}
+func (s *Server) Login(ctx context.Context, in *backend.LoginRequest) (*backend.LoginReply, error) {
+	log.Println("Login attempt for email:", in.Username)
+
+	user, err := s.PrismaClient.User.FindUnique(
+		db.User.Username.Equals(in.Username),
+	).Exec(ctx)
+
+	if err != nil {
+		log.Printf("User not found: %v", err)
+		return nil, fmt.Errorf("incorrect email or password")
+	}
+
+	if user.Password != in.Password {
+		log.Println("Invalid password")
+		return nil, fmt.Errorf("incorrect email or password")
+	}
+
+	token, err := backend.GenerateJWT(in.Username)
+	if err != nil {
+		log.Printf("Error generating token: %v", err)
+		return nil, fmt.Errorf("could not generate token: %v", err)
+	}
+
+	log.Printf("Generated token: %s", token)
+
+	return &backend.LoginReply{
+		Token:   token,
+		Message: "User was signed up!",
+	}, nil
+}
+
+func (s *Server) SignUp(ctx context.Context, in *backend.SignUpRequest) (*backend.SignUpReply, error) {
+	obj, err := s.PrismaClient.User.CreateOne(
+		db.User.Password.Set(in.Password),
+		db.User.Username.Set(in.Username),
+	).Exec(ctx)
+
+	if err != nil {
+		log.Printf("failed to create user: %v", err)
+		return nil, fmt.Errorf("failed to register user")
+	}
+
+	return &backend.SignUpReply{
+		UserId:  obj.ID,
+		Message: "User was created!",
+	}, nil
 }
 
 func main() {

@@ -26,6 +26,22 @@ service Greeter {
       name: "goodbye" // query name
     };
   }
+
+   rpc Login (LoginRequest) returns (LoginReply) {
+    // Plugin definition
+    option (graphql.schema) = {
+      type: MUTATION  // declare as Mutation
+      name: "login"   // mutation name
+    };
+  }
+
+  rpc SignUp (SignUpRequest) returns (SignUpReply) {
+    // Plugin definition
+    option (graphql.schema) = {
+      type: MUTATION   // declare as Mutation
+      name: "signup"   // mutation name
+    };
+  } 
 }
 
 message HelloRequest {
@@ -44,4 +60,25 @@ message GoodbyeRequest {
 
 message GoodbyeReply {
   string message = 1;
+}
+
+message LoginRequest {
+  string username = 1 [(graphql.field) = {required: true}];
+  string password = 2 [(graphql.field) = {required: true}];
+}
+
+message LoginReply {
+  string token = 1;
+  string message = 2;
+}
+
+message SignUpRequest {
+  string username = 1 [(graphql.field) = {required: true}];
+  string password = 2 [(graphql.field) = {required: true}];
+  string email = 3 [(graphql.field) = {required: true}];
+}
+
+message SignUpReply {
+  string userId = 1;
+  string message = 2;
 }
