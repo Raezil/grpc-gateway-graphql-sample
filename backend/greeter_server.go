@@ -28,7 +28,6 @@ func (s *Server) SayGoodbye(ctx context.Context, req *GoodbyeRequest) (*GoodbyeR
 }
 
 func AuthUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	log.Println(info.FullMethod)
 	if info.FullMethod == "/greeter.Greeter/Login" || info.FullMethod == "/greeter.Greeter/SignUp" {
 		return handler(ctx, req)
 	}
