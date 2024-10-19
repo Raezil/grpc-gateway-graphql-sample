@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	Greeter_SayHello_FullMethodName   = "/greeter.Greeter/SayHello"
 	Greeter_SayGoodbye_FullMethodName = "/greeter.Greeter/SayGoodbye"
+	Greeter_Login_FullMethodName      = "/greeter.Greeter/Login"
+	Greeter_SignUp_FullMethodName     = "/greeter.Greeter/SignUp"
 )
 
 // GreeterClient is the client API for Greeter service.
@@ -31,6 +33,8 @@ const (
 type GreeterClient interface {
 	SayHello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloReply, error)
 	SayGoodbye(ctx context.Context, in *GoodbyeRequest, opts ...grpc.CallOption) (*GoodbyeReply, error)
+	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error)
+	SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpReply, error)
 }
 
 type greeterClient struct {
@@ -61,12 +65,34 @@ func (c *greeterClient) SayGoodbye(ctx context.Context, in *GoodbyeRequest, opts
 	return out, nil
 }
 
+func (c *greeterClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(LoginReply)
+	err := c.cc.Invoke(ctx, Greeter_Login_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *greeterClient) SignUp(ctx context.Context, in *SignUpRequest, opts ...grpc.CallOption) (*SignUpReply, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SignUpReply)
+	err := c.cc.Invoke(ctx, Greeter_SignUp_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GreeterServer is the server API for Greeter service.
 // All implementations must embed UnimplementedGreeterServer
 // for forward compatibility.
 type GreeterServer interface {
 	SayHello(context.Context, *HelloRequest) (*HelloReply, error)
 	SayGoodbye(context.Context, *GoodbyeRequest) (*GoodbyeReply, error)
+	Login(context.Context, *LoginRequest) (*LoginReply, error)
+	SignUp(context.Context, *SignUpRequest) (*SignUpReply, error)
 	mustEmbedUnimplementedGreeterServer()
 }
 
@@ -82,6 +108,12 @@ func (UnimplementedGreeterServer) SayHello(context.Context, *HelloRequest) (*Hel
 }
 func (UnimplementedGreeterServer) SayGoodbye(context.Context, *GoodbyeRequest) (*GoodbyeReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SayGoodbye not implemented")
+}
+func (UnimplementedGreeterServer) Login(context.Context, *LoginRequest) (*LoginReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedGreeterServer) SignUp(context.Context, *SignUpRequest) (*SignUpReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SignUp not implemented")
 }
 func (UnimplementedGreeterServer) mustEmbedUnimplementedGreeterServer() {}
 func (UnimplementedGreeterServer) testEmbeddedByValue()                 {}
@@ -140,6 +172,42 @@ func _Greeter_SayGoodbye_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Greeter_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).Login(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Greeter_Login_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).Login(ctx, req.(*LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Greeter_SignUp_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SignUpRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GreeterServer).SignUp(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Greeter_SignUp_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GreeterServer).SignUp(ctx, req.(*SignUpRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Greeter_ServiceDesc is the grpc.ServiceDesc for Greeter service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -154,6 +222,14 @@ var Greeter_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SayGoodbye",
 			Handler:    _Greeter_SayGoodbye_Handler,
+		},
+		{
+			MethodName: "Login",
+			Handler:    _Greeter_Login_Handler,
+		},
+		{
+			MethodName: "SignUp",
+			Handler:    _Greeter_SignUp_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
