@@ -28,7 +28,8 @@ func (s *Server) SayGoodbye(ctx context.Context, req *GoodbyeRequest) (*GoodbyeR
 }
 
 func AuthUnaryInterceptor(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-	if info.FullMethod == "/authenticator.Auth/Login" || info.FullMethod == "/authenticator.Auth/Register" {
+	log.Println(info.FullMethod)
+	if info.FullMethod == "/greeter.Greeter/Login" || info.FullMethod == "/greeter.Greeter/SignUp" {
 		return handler(ctx, req)
 	}
 	md, ok := metadata.FromIncomingContext(ctx)
