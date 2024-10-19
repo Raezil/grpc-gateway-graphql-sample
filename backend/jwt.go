@@ -26,8 +26,8 @@ func NewClaims(username string) *Claims {
 	}
 }
 
-func GenerateJWT(email string) (string, error) {
-	claims := NewClaims(email)
+func GenerateJWT(username string) (string, error) {
+	claims := NewClaims(username)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString(jwtSecret)
 	if err != nil {
